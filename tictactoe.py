@@ -39,13 +39,6 @@ def isDraw(grid):
             return False
     return True
 
-def makeComputerMove(grid):
-    options = []
-    for i in range(len(grid)):
-        if grid[i] == ' ':
-            options.append(i)
-    grid[random.choice(options)] = 'X'
-
 def getUserMove(grid, end_point, cursor):
     x = cursor[0]
     y = cursor[1]
@@ -56,6 +49,19 @@ def getUserMove(grid, end_point, cursor):
     
     if grid[row * 3 + col] == ' ':
         grid[row * 3 + col] = 'O'
+        return True
+    return False
+
+def getUserMove2(grid, end_point, cursor):
+    x = cursor[0]
+    y = cursor[1]
+    
+    col = int(3 * y / end_point)
+    row = int(3 * x / end_point)
+    print(row, col)
+    
+    if grid[row * 3 + col] == ' ':
+        grid[row * 3 + col] = 'X'
         return True
     return False
 
@@ -81,6 +87,7 @@ camera = cv2.VideoCapture(0)
 
 grid = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
 playerMove = True
+playerMove2 = True
 
 gameOngoing = True
 
@@ -103,9 +110,9 @@ while gameOngoing:
         if key == ord("p") and (getUserMove(grid, 600, cursor)):
             playerMove = False
     else:
-        makeComputerMove(grid)
-        playerMove = True
-
+        if key == ord("q") and (getUserMove2(grid, 600, cursor)):
+            playerMove2 = False
+            playerMove = True
     if determineWinner(grid) != ' ':
         print(determineWinner(grid) + ' Won the Game!')
         gameOngoing = False
