@@ -1,8 +1,7 @@
-## Welcome to GitHub Pages
+## Webcam Based Two Player Tic Tac Toe
+#### By: Aayushi Modi, Riya Baheti, Sashu Shankar
 
-You can use the [editor on GitHub](https://github.com/riyabaheti/TicTacToe/edit/gh-pages/index.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Welcome to our website for our CSE 455 Final Project: Webcam Based Two Player Tic Tac Toe!
 
 ### Markdown
 
