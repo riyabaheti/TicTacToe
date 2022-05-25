@@ -14,7 +14,7 @@ def fillBoard(frame, end_point, grid, size):
             col = int(i % 3) * int(end_point / 3) +int(end_point / 6)
             cv2.line(frame, (row + size, col + size), (row - size, col - size), (0, 0, 0), 5)
             cv2.line(frame, (row - size, col + size), (row + size, col - size), (0, 0, 0), 5)
-        elif grid[i] == 'O':
+        if grid[i] == 'O':
             row = int(i / 3) * int(end_point / 3) + int(end_point / 6)
             col = int(i % 3) * int(end_point / 3) + int(end_point / 6)
             cv2.circle(frame, (row, col), size, (0, 0, 0), 5)
@@ -39,29 +39,27 @@ def isDraw(grid):
             return False
     return True
 
-def getUserMove(grid, end_point, cursor):
+def getRedUserMove(grid, end_point, cursor):
     x = cursor[0]
     y = cursor[1]
     
     col = int(3 * y / end_point)
     row = int(3 * x / end_point)
-    print(row, col)
-    
-    if grid[row * 3 + col] == ' ':
-        grid[row * 3 + col] = 'O'
-        return True
-    return False
-
-def getUserMove2(grid, end_point, cursor):
-    x = cursor[0]
-    y = cursor[1]
-    
-    col = int(3 * y / end_point)
-    row = int(3 * x / end_point)
-    print(row, col)
     
     if grid[row * 3 + col] == ' ':
         grid[row * 3 + col] = 'X'
+        return True
+    return False
+
+def getBlueUserMove(grid, end_point, cursor):
+    x = cursor[0]
+    y = cursor[1]
+    
+    col = int(3 * y / end_point)
+    row = int(3 * x / end_point)
+    
+    if grid[row * 3 + col] == ' ':
+        grid[row * 3 + col] = 'O'
         return True
     return False
 
@@ -82,46 +80,87 @@ def getContours(mask, frame):
     return frame, center
 
 
-camera = cv2.VideoCapture(0)
+def runGame():
+    camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
 
-grid = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
-playerMove = True
-playerMove2 = True
+    grid = [' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']
+    playerMove = True
 
-gameOngoing = True
+    gameOngoing = True
 
-while gameOngoing:
-    frame = camera.read()[1]
+    while gameOngoing:
+        frame = camera.read()[1]
 
-    frame = cv2.resize(frame, (600, 600))
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        frame = cv2.resize(frame, (600, 600))
+        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    mask = cv2.inRange(hsv, (30, 90, 5), (70, 255, 255))
+        if playerMove:
+            mask = cv2.inRange(hsv, (0, 100, 100), (10, 255, 255))
 
-    frame, cursor = getContours(mask, frame)
+            frame, cursor = getContours(mask, frame)
 
-    drawEmptyGrid(frame, 600)
-    fillBoard(frame, 600, grid, 50)
+            drawEmptyGrid(frame, 600)
+            fillBoard(frame, 600, grid, 50)
 
-    key = cv2.waitKey(1) & 0xFF
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("r") and (getRedUserMove(grid, 600, cursor)):
+                playerMove = False
+        else:
+            mask = cv2.inRange(hsv, (110, 50, 50), (130, 255, 255))
 
-    if playerMove:
-        if key == ord("p") and (getUserMove(grid, 600, cursor)):
-            playerMove = False
-    else:
-        if key == ord("q") and (getUserMove2(grid, 600, cursor)):
-            playerMove2 = False
-            playerMove = True
-    if determineWinner(grid) != ' ':
-        print(determineWinner(grid) + ' Won the Game!')
-        gameOngoing = False
-    elif isDraw(grid):
-        print('Game over! It was a draw :(')
-        gameOngoing = False
+            frame, cursor = getContours(mask, frame)
+
+            drawEmptyGrid(frame, 600)
+            fillBoard(frame, 600, grid, 50)
+
+            key = cv2.waitKey(1) & 0xFF
+            if key == ord("b") and (getBlueUserMove(grid, 600, cursor)):
+                playerMove = True
+
+        if determineWinner(grid) != ' ':
+            if determineWinner(grid) == 'X':
+                print('Red (X) won the Game!')
+            else:
+                print('Blue (O) won the Game!')
+            gameOngoing = False
+        elif isDraw(grid):
+            print('Game over! It was a draw :(')
+            gameOngoing = False
 
 
-    cv2.imshow("Frame", frame)    
+        cv2.imshow("Frame", frame)    
 
-camera.release()
-cv2.destroyAllWindows()
+    camera.release()
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    print("Welcome to Tic Tac Toe.")
+    print("Press i to see instructions.")
+    print("Press q to quit.")
+    print("Press s to start!")
+    playing = True
+
+    while playing:
+        val = input("Enter your letter:")
+        if val == 'i':
+            print('This is a webcam based two player tic tac toe game.')
+            print('To play, press s when prompted to start the game, and the tic tac toe grid will pop up.')
+            print('Make sure that one player has the red X pulled up on a handheld device, and the other player has the blue O.')
+            print('The X and O can be found in the resources folder.')
+            print('The red X player starts. When it is each players\' the player will hold up their device in the grid space where they would like to place their move.')
+            print('When the red X player is ready to make their move (they are holding the red X in the correct frame), they will press the r key on the keyboard to make their move.')
+            print('Similarly, when the blue X player is ready to make their move, they will press the b key on the keyboard.')
+            print('When the game is over, the winner (or a message saying that the game is a draw), will print out in the terminal.')
+            print('At this point, you can choose to play again, see the instructions again, or quit.')
+            print("Now press s to start!")
+        elif val == 's':
+            runGame()
+            print("Thanks for playing!")
+        elif val == 'q':
+            playing = False
+            print("Goodbye!")
+        else:
+            print("Sorry, enter a valid letter.")
+
