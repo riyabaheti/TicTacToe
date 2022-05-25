@@ -12,12 +12,12 @@ def fillBoard(frame, end_point, grid, size):
         if grid[i] == 'X':
             row = int(i / 3) * int(end_point / 3) + int(end_point / 6)
             col = int(i % 3) * int(end_point / 3) +int(end_point / 6)
-            cv2.line(frame, (row + size, col + size), (row - size, col - size), (0, 0, 0), 5)
-            cv2.line(frame, (row - size, col + size), (row + size, col - size), (0, 0, 0), 5)
+            cv2.line(frame, (row + size, col + size), (row - size, col - size), (0, 0, 255), 5)
+            cv2.line(frame, (row - size, col + size), (row + size, col - size), (0, 0, 255), 5)
         if grid[i] == 'O':
             row = int(i / 3) * int(end_point / 3) + int(end_point / 6)
             col = int(i % 3) * int(end_point / 3) + int(end_point / 6)
-            cv2.circle(frame, (row, col), size, (0, 0, 0), 5)
+            cv2.circle(frame, (row, col), size, (255, 0, 0), 5)
             
 def determineWinner(grid):
     for i in range(3):
