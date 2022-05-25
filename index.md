@@ -4,6 +4,7 @@
 Welcome to our website for our CSE 455 Final Project: Webcam Based Two Player Tic Tac Toe!
 
 ### Introduction & Problem Set Up
+Our goal was to create a program that allows you to play Tic Tac Toe by gesturing where to make your move, utilizing the webcam on your computer. Our idea was derived from Xbox Kinect and will mimic a human-camera interaction to play this two-person game. Since Xbox is not an easily mobile game and usually requires an at home setup, we wanted to build a game that can be used outside of this console set up. With our setup, one solely requires an image of an O and an X on their phone which we provide in our resources folder and can be easily downloaded onto any handheld device. This makes our Tic Tac Toe game portable and more accessible to play with friends anywhere where a laptop webcame camera is available. The game tackles interaction by using object tracking to recognize the color and shape that is held up by the player for game control.
 
 ### Process & Techniques
 
