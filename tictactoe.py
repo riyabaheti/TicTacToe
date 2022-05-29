@@ -1,5 +1,8 @@
 import cv2
 import random
+from tkinter import *
+from PIL import ImageTk,ImageChops
+
 
 def drawEmptyGrid(frame, end_point):
     cv2.line(frame, (0, int(end_point / 3)), (end_point, int(end_point / 3)), (0, 0, 0), 5)
@@ -39,7 +42,7 @@ def isDraw(grid):
             return False
     return True
 
-def getRedUserMove(grid, end_point, cursor):
+def getUserMoveX(grid, end_point, cursor):
     x = cursor[0]
     y = cursor[1]
     
@@ -51,7 +54,7 @@ def getRedUserMove(grid, end_point, cursor):
         return True
     return False
 
-def getBlueUserMove(grid, end_point, cursor):
+def getUserMoveO(grid, end_point, cursor):
     x = cursor[0]
     y = cursor[1]
     
@@ -81,6 +84,7 @@ def getContours(mask, frame):
 
 
 def runGame():
+
     camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
 
 
@@ -104,7 +108,7 @@ def runGame():
             fillBoard(frame, 600, grid, 50)
 
             key = cv2.waitKey(1) & 0xFF
-            if key == ord("r") and (getRedUserMove(grid, 600, cursor)):
+            if key == ord("r") and (getUserMoveX(grid, 600, cursor)):
                 playerMove = False
         else:
             mask = cv2.inRange(hsv, (110, 50, 50), (130, 255, 255))
@@ -115,7 +119,7 @@ def runGame():
             fillBoard(frame, 600, grid, 50)
 
             key = cv2.waitKey(1) & 0xFF
-            if key == ord("b") and (getBlueUserMove(grid, 600, cursor)):
+            if key == ord("b") and (getUserMoveO(grid, 600, cursor)):
                 playerMove = True
 
         if determineWinner(grid) != ' ':
@@ -123,9 +127,11 @@ def runGame():
                 print('Red (X) won the Game!')
             else:
                 print('Blue (O) won the Game!')
+            endOfGameGrid()
             gameOngoing = False
         elif isDraw(grid):
             print('Game over! It was a draw :(')
+            endOfGameGrid()
             gameOngoing = False
 
 
@@ -134,33 +140,65 @@ def runGame():
     camera.release()
     cv2.destroyAllWindows()
 
+def endOfGameGrid():
+    root = Tk()
+    root.title("Tic Tac Toe")
+
+    def startGameAgain():
+        frame.destroy()
+        yesB.destroy()
+        noB.destroy()
+        root.destroy()
+        runGame()
+
+    def endGameCompletely():
+        frame.destroy()
+        frame.destroy()
+        yesB.destroy()
+        noB.destroy()
+        root.destroy()
+
+    frame = LabelFrame(root, text="Tic Tac Toe", padx=50, pady=50, bg="#66CCFF")
+    frame.pack(padx=50, pady=50)
+
+    instructions = Label(frame, text="Would you like to play again?", bg="#66CCFF")
+    instructions.pack()
+
+    yesB = Button(frame, text="Yes", background="white", command=startGameAgain)
+    yesB.pack(pady=50)
+
+    noB = Button(frame, text="No", background="white", command=endGameCompletely)
+    noB.pack(pady=50)
+
+    root.mainloop()
+
+
+def startGameGrid():
+    root = Tk()
+    root.title("Tic Tac Toe")
+
+    def destroyStartGrid():
+        frame.destroy()
+        b.destroy()
+        root.destroy()
+
+    frame = LabelFrame(root, text="Welcome to Webcam-Based Two Player Tic Tac Toe", padx=50, pady=50, bg="#66CCFF")
+    frame.pack(padx=50, pady=50)
+
+    startText = "Welcome to Tic Tac Toe. \n This is a webcam based two player tic tac toe game. \n"
+    toPlay = "To play, press the start button below to begin the game, and the tic tac toe grid will pop up. \n"
+    gameInstructions = "Make sure that one player has the red X pulled up on a handheld device, and the other player has the blue O. \n The X and O can be found in the resources folder or can be drawn as your convenience. The red X player starts. When it is each \n players\' the player will hold up their device in the grid space where they would like to place their move. When the red X \n player is ready to make their move (they are holding the red X in the correct frame), they will press the r key on the keyboard \n to make their move. Similarly, when the blue X player is ready to make their move, they will press the b key on the keyboard. \n When the game is over, the winner (or a message saying that the game is a draw), will print out in the terminal. At this point, \n you can choose to play again, see the instructions again, or quit. \n  Now press Start Game to begin!"
+
+    instructions = Label(frame, text=startText + toPlay + gameInstructions, bg="#66CCFF")
+    instructions.pack()
+
+    b = Button(frame, text="Start Game", background="white", command=destroyStartGrid)
+    b.pack(pady=50)
+
+    root.mainloop()
+    
 
 if __name__ == "__main__":
-    print("Welcome to Tic Tac Toe.")
-    print("Press i to see instructions.")
-    print("Press q to quit.")
-    print("Press s to start!")
-    playing = True
-
-    while playing:
-        val = input("Enter your letter:")
-        if val == 'i':
-            print('This is a webcam based two player tic tac toe game.')
-            print('To play, press s when prompted to start the game, and the tic tac toe grid will pop up.')
-            print('Make sure that one player has the red X pulled up on a handheld device, and the other player has the blue O.')
-            print('The X and O can be found in the resources folder.')
-            print('The red X player starts. When it is each players\' the player will hold up their device in the grid space where they would like to place their move.')
-            print('When the red X player is ready to make their move (they are holding the red X in the correct frame), they will press the r key on the keyboard to make their move.')
-            print('Similarly, when the blue X player is ready to make their move, they will press the b key on the keyboard.')
-            print('When the game is over, the winner (or a message saying that the game is a draw), will print out in the terminal.')
-            print('At this point, you can choose to play again, see the instructions again, or quit.')
-            print("Now press s to start!")
-        elif val == 's':
-            runGame()
-            print("Thanks for playing!")
-        elif val == 'q':
-            playing = False
-            print("Goodbye!")
-        else:
-            print("Sorry, enter a valid letter.")
+    startGameGrid()
+    runGame()
 
