@@ -165,10 +165,10 @@ def endOfGameGrid():
     instructions.pack()
 
     yesB = Button(frame, text="Yes", background="white", command=startGameAgain)
-    yesB.pack(pady=50)
+    yesB.pack(pady=30)
 
     noB = Button(frame, text="No", background="white", command=endGameCompletely)
-    noB.pack(pady=50)
+    noB.pack(pady=30)
 
     root.mainloop()
 
