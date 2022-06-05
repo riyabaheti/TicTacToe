@@ -76,3 +76,5 @@ def startGameBoard():
     b.pack(pady=50)
 
     root.mainloop()
+
+from tictactoe import runGame

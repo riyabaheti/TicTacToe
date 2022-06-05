@@ -1,9 +1,10 @@
 import random
 from tkinter import *
 from PIL import ImageTk,ImageChops
-
-from board import *
+import cv2
 from gamestatus import *
+
+playerMove = True
 
 def getContours(mask, frame):
     center = (-1, -1)
@@ -23,7 +24,7 @@ def getContours(mask, frame):
 def playerTurn(grid, playerMove, frame, hsv):
     # true = userX
     if playerMove:
-        mask = cv2.inRange(hsv, (0, 100, 100), (10, 255, 255))
+        mask = cv2.inRange(hsv, (160, 50, 50), (180, 255, 255))
 
         frame, cursor = getContours(mask, frame)
 
@@ -33,7 +34,7 @@ def playerTurn(grid, playerMove, frame, hsv):
         key = cv2.waitKey(1) & 0xFF
         if key == ord("r") and (getUserMoveX(grid, 600, cursor)):
             playerMove = False
-    else: # true = userO
+    else: # false = userO
         mask = cv2.inRange(hsv, (110, 50, 50), (130, 255, 255))
 
         frame, cursor = getContours(mask, frame)
@@ -45,7 +46,7 @@ def playerTurn(grid, playerMove, frame, hsv):
         if key == ord("b") and (getUserMoveO(grid, 600, cursor)):
             playerMove = True
 
-
+    return playerMove
 
 def runGame():
     camera = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -59,13 +60,13 @@ def runGame():
 
     while is_active_game:
         frame = camera.read()[1]
-
         frame = cv2.resize(frame, (600, 600))
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        playerTurn(grid, player_move, frame, hsv)
+        player_move = playerTurn(grid, player_move, frame, hsv)
 
         currentWinner = determineWinner(grid)
+
         if currentWinner != ' ':
             if currentWinner == 'X':
                 print('Red (X) won the Game!')
@@ -84,3 +85,4 @@ def runGame():
     camera.release()
     cv2.destroyAllWindows()
 
+from board import *

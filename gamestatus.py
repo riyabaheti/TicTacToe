@@ -3,7 +3,7 @@ import numpy as np
 # returns whether or not the current board results in a draw
 def isDraw(grid):
     count = np.count_nonzero(grid == ' ')
-    return count == 0
+    return count != 0
 
 
 # returns the winner of the game given a board status
